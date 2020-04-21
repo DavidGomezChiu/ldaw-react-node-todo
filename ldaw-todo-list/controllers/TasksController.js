@@ -1,36 +1,18 @@
 const Task = require('../models/Task');
 const homepageController = require('./HomepageController');
 
-exports.done = (req, res) => {
-  let id = req.params.id;
-  Task.find(id)
-  .then((task) => {
-    return Task.markAsDone(task);
-  })
-  .then((result) => {
-    res.redirect('/');
-  });
-}
-
 exports.store = (req, res) => {
   let task = {};
   task.description = req.body.description;
   Task.create(task).then((id) => {
     if (req.xhr || req.headers.accept.indexOf('json') > -1){
       Task.find(id).then(task => {
-        res.json(task)
+        res.status(200).json(task)
       })
     }else{
-      res.redirect('/');
+      res.status(400).json({error:'error'});
     }
   });
-}
-
-exports.update = (req, res) => {
-  let newTask = req.body;
-  newTask.status == Task.PENDING ? newTask.status = Task.DONE : newTask.status = Task.PENDING;
-  Task.update(newTask);
-  res.redirect('/');
 }
 
 exports.done = (req, res) => {
@@ -39,10 +21,10 @@ exports.done = (req, res) => {
     Task.update(task);
     if (req.xhr || req.headers.accept.indexOf('json') > -1){
       Task.find(task.id).then(doneTask => {
-        res.json(doneTask)
+        res.status(200).json(doneTask)
       })
     }else{
-      res.redirect('/');
+      res.status(400).json({error:'error'});
     }
   });
 }
@@ -52,13 +34,13 @@ exports.delete = (req, res) => {
     if(task){
       Task.delete(task.id).then(deleted => {
         if (req.xhr || req.headers.accept.indexOf('json') > -1){
-          res.json(task);
+          res.status(200).json(task);
         }else{
-          res.redirect('/');
+          res.status(400).json({error:'error'});
         }
       });
     }else{
-      res.status(404).redirect('/');
+      res.status(404).json({error:'not found'});
     }
   });
 }
