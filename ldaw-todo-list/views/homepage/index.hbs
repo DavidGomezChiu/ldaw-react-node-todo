@@ -1,0 +1,130 @@
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>TODO List</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <form class="form-inline">
+        <div class="input-group w-100">
+          <input required type="text" id="taskDescription" name="description" placeholder="I have to..." class="form-control">
+          <div class="input-group-append">
+            <input type="button" onclick="saveTask();" value="Add" class="btn btn-primary">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div id="tasksList" class="col-lg-12">
+      {{#each tasks}}
+      <div id="card{{id}}" class="card my-3 {{#eq status 'done' }}bg-light{{/eq}}">
+        <div class="card-body">
+          <p style="{{#eq status 'done'}}text-decoration: line-through;{{/eq}}" id="task{{id}}" class="card-text">{{ description }}</p>
+          {{#eq status 'pending'}}
+          <form>
+            <a href="javascript:;" class="card-link" onclick="parentNode.parentNode.removeChild(parentNode); markTaskAsDone({{id}});">Done</a>
+          </form>
+          {{/eq}}
+          <a href="javascript:;" class="card-link text-danger" onclick="deleteTask({{id}});">Borrar</a>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</main>
+<script>
+  function saveTask(){
+    let description = document.getElementById('taskDescription').value;
+    let body = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({description: description})
+    };
+    fetch('/tasks',body).then(response => {
+      if(response.ok){
+        return response.json();
+      }else{
+        throw "Error en la llamada AJAX"
+      }
+    }).then(task => {
+      document.getElementById('taskDescription').value = '';
+      addTask(task);
+    }).catch(error => {
+      console.log('Error '+error);
+    });
+  }
+
+  function addTask(task){
+    let html = `
+      <div id="card${task.id}" class="card my-3">
+        <div class="card-body">
+          <p id="task${task.id}" class="card-text">${task.description}</p>
+          <form>
+            <a href="javascript:;" class="card-link" onclick="parentNode.parentNode.removeChild(parentNode); markTaskAsDone(${task.id});">Done</a>
+          </form>
+          <a href="javascript:;" class="card-link text-danger" onclick="deleteTask(${task.id});">Borrar</a>
+        </div>
+      </div>
+    `;
+    let node = document.createRange().createContextualFragment(html);
+    document.getElementById('tasksList').prepend(node);
+  }
+  function markTaskAsDone(taskId){
+    let body = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({id: taskId})
+    };
+    fetch('/tasks/'+taskId+'/done',body).then(response => {
+      if(response.ok){
+        return response.json();
+      }else{
+        throw "Error en la llamada AJAX"
+      }
+    }).then(task => {
+      showDone(taskId);
+    }).catch(error => {
+      console.log('Error '+error);
+    });
+  }
+  function showDone(id){
+    let card = document.getElementById('card'+id);
+    let description = document.getElementById('task'+id);
+
+    description.style.textDecoration = 'line-through';
+    card.classList.add('bg-light');
+  }
+  function deleteTask(id){
+    let body = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({id: id})
+    };
+    fetch('/tasks/'+id,body).then(response => {
+      if(response.ok){
+        return response.json();
+      }else{
+        throw "Error en la llamada AJAX"
+      }
+    }).then(task => {
+      removeTask(id);
+    }).catch(error => {
+      console.log('Error '+error);
+    });
+  }
+  function removeTask(id){
+    let card = document.getElementById('card'+id);
+    card.parentNode.removeChild(card);
+  }
+</script>
