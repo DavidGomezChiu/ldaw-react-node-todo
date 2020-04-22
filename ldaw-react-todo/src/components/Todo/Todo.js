@@ -14,10 +14,12 @@ const Todo = ({ id, description, status, onDelete, onDone}) => {
     }
 
     return(
-        <div className={status}>
+        <div className={'todo '+status}>
             {description}
-            <button onClick={handleDelete}>Delete</button>
-            <button onClick={handleDone}>Done</button>
+            <div className="todo-buttons">
+                <button className="delete-button" onClick={handleDelete}>Delete</button>
+                {status == 'pending' ? <button className="done-button" onClick={handleDone}>Done</button> : ''}
+            </div>
         </div>
     );
 }

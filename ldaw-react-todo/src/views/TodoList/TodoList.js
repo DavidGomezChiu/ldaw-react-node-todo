@@ -18,7 +18,6 @@ const TodoList = () => {
             tempTodos.push(element);
         });
         console.log(tempTodos)
-        //setTodos(tempTodos)
         setNeedsChange(true)
     }
 
@@ -57,15 +56,15 @@ const TodoList = () => {
     }
 
     return(
-        <div>
+        <div className="todolist-container">
             <h1>Soy TodoList</h1>
             <p>Mi lista de todos:</p>
             <CreateForm onCreate={createTodo}></CreateForm>
-            <ul>
+            <div className="task-container">
                 {
                     console.log(todos)
                 }
-                { //algo falla por el mapping
+                {
                     todos.todos.length > 0 ?
                         (() => {
                             let jsx = todos.todos.map((todo,index) => (
@@ -84,7 +83,7 @@ const TodoList = () => {
                         :
                         ''
                 }
-            </ul>
+            </div>
         </div>
     );
 }
