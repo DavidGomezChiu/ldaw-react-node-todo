@@ -1,19 +1,47 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import axios from 'axios';
 
-const useTodos = () => {
-    const [todos, setTodos] = useState([]);
+const functions = {
+    async UseGetTodos() {    
+        console.log('mount');
 
-    useEffect(() => {
-        (async () => {
-            const response = await axios.get('http://127.0.0.1:3001/tasks');
-            console.log(response);
-            console.log(response.data.tasks);
-            setTodos(response.data.tasks);
-        })();
-    },[])
+        let response = await axios.get('http://127.0.0.1:3001/tasks');
+        
+        console.log('todos');
+        console.log(response.data.tasks);
+        
+        return response.data.tasks;
+    },
+    async UseCreateTodo(description) {
+        var created;
+        
+        const response = await axios.post('http://127.0.0.1:3001/tasks',{
+            description: description
+        });
+        console.log(response);
+        created = response.data.task;
 
-    return todos;
+        return created;
+    }
+    ,
+    async UseDeleteTodo(id) {
+        var deleted;
+
+        const response = await axios.delete('http://127.0.0.1:3001/tasks/'+id);
+        console.log(response);
+        deleted = response.data.task
+
+        return deleted;
+    },
+    async UseMarkAsDone(id) {
+        var done;
+
+        const response = await axios.post('http://127.0.0.1:3001/tasks/'+id+'/done');
+        console.log(response);
+        done = response.data.task;
+
+        return done;
+    }
 }
 
-export default useTodos;
+export default functions;

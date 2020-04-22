@@ -1,13 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import './Todo.scss'
 
-const Todo = (props) => {
-    const [message, setMessage] = useState('');
-    const [completed, setCompleted] = useState(false);
+const Todo = ({ id, description, status, onDelete, onDone}) => {
+
+    const handleDelete = () => {
+        console.log('delete '+id);
+        onDelete(id)
+    }
+    
+    const handleDone = () => {
+        console.log('done '+id);
+        onDone(id)
+    }
 
     return(
-        <div>
-            <h1>Soy Todo</h1>
+        <div className={status}>
+            {description}
+            <button onClick={handleDelete}>Delete</button>
+            <button onClick={handleDone}>Done</button>
         </div>
     );
 }

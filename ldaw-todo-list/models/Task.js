@@ -11,7 +11,7 @@ exports.all = () => {
 
 exports.create = (task) => {
   return knex('tasks')
-    .insert({ description: task.description });
+    .insert({ description: task.description, status: this.PENDING });
 }
 
 exports.find = (id) => {
