@@ -8,7 +8,6 @@ import CreateForm from '../../components/CreateForm/CreateForm';
 let result;
 const TodoList = () => {
     const [todos, setTodos] = useState({todos:[]});
-    const [initialized, setInitialized] = useState(false);
     const [needsChange, setNeedsChange] = useState(false);
 
     const fetchTodos = async () => {
@@ -37,15 +36,24 @@ const TodoList = () => {
 
     const deleteTodo = (id) => {
         functions.UseDeleteTodo(id);
+        setTimeout(() => {
+            fetchTodos()
+        },500);
     }
 
     const markAsDone = (id) => {
         functions.UseMarkAsDone(id);
+        setTimeout(() => {
+            fetchTodos()
+        },500);
     }
 
     const createTodo = description => {
         console.log('creando: '+description);
         functions.UseCreateTodo(description);
+        setTimeout(() => {
+            fetchTodos()
+        },500);
     }
 
     return(
